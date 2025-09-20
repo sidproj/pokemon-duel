@@ -1,8 +1,10 @@
 "use client";
 import { PokemonTableInterface } from "@/app/lib/types";
-import { Table, TableProps } from "antd";
+import { debounce } from "@/app/lib/utility";
+import { Input, Table, TableProps } from "antd";
 import Image from "next/image";
 import Link from "next/link";
+import { useMemo, useState } from "react";
 
 interface Props {
   pokemons: PokemonTableInterface[];
@@ -14,7 +16,7 @@ const columns: TableProps<PokemonTableInterface>["columns"] = [
     dataIndex: "image",
     key: "image",
     width: 180,
-    render: (image: string,record:PokemonTableInterface) => (
+    render: (image: string, record: PokemonTableInterface) => (
       <Link href={`/pokemons/${record._id}`}>
         <Image
           src={image}
@@ -45,17 +47,42 @@ const columns: TableProps<PokemonTableInterface>["columns"] = [
 const PokemonTable = (props: Props) => {
   const { pokemons } = props;
 
+  const [searchText, setSearchText] = useState("");
+
+  // Debounced setter to reduce re-renders
+  const handleSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setSearchText(value.toLowerCase());
+      }, 700),
+    []
+  );
+
+  const filteredData = useMemo(() => {
+    if (!searchText) return pokemons;
+    return pokemons.filter((p) => p.name.toLowerCase().includes(searchText));
+  }, [pokemons, searchText]);
+
   return (
-    <Table
-      rowKey="_id"
-      columns={columns}
-      dataSource={pokemons}
-      bordered
-      pagination={{
-        position: ["topRight", "bottomRight"],
-        pageSize: 10,
-      }}
-    />
+    <div className="flex flex-col gap-4">
+      <Input.Search
+        placeholder="Search Pokémon by name"
+        allowClear
+        onChange={(e) => handleSearch(e.target.value)}
+        style={{ width: 300 }}
+      />
+
+      <Table
+        rowKey="_id"
+        columns={columns}
+        dataSource={filteredData}
+        bordered
+        pagination={{
+          position: ["topRight", "bottomRight"],
+          pageSize: 10,
+        }}
+      />
+    </div>
   );
 };
 

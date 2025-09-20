@@ -69,6 +69,7 @@ const Board = () => {
           boardKey: benchIds[index],
           image: p.image,
           id: p._id,
+          steps: p.steps,
         };
       }
     );
@@ -88,6 +89,8 @@ const Board = () => {
 
       return newPlayers;
     });
+
+    console.log("updates");
   }, [pokemonPieces]);
 
   useEffect(() => {
@@ -169,7 +172,6 @@ const Board = () => {
   };
 
   const handlePieceSelection = (playerIndex: number, pokemonIndex: number) => {
-    console.log({ playerIndex, pokemonIndex });
     if (playerIndex != playerTurn) return;
 
     const filledSlots = [
@@ -178,7 +180,8 @@ const Board = () => {
     ];
     const slots = findPossiblePlace(
       players[playerTurn].pokemons[pokemonIndex].boardKey,
-      filledSlots
+      filledSlots,
+      players[playerTurn].pokemons[pokemonIndex].steps
     );
     const keys = Object.keys(slots).map((k) => parseInt(k));
     setMoveableSlots(keys);
@@ -200,6 +203,9 @@ const Board = () => {
 
           return newPlayers;
         });
+        if (i + 1 == path.length) {
+          setPlayerTurn((old) => (old === 0 ? 1 : 0));
+        }
       }, animationDelay * (i + (3 + i * 4)));
     }
   };
@@ -210,7 +216,6 @@ const Board = () => {
       ...players[1].pokemons.map((p) => p.boardKey),
     ];
 
-    console.log(filledSlots);
     if (selectedPiece == null || !moveAbleSlots.includes(boardKey)) {
       setSelectedPiece(null);
       setMoveableSlots([]);
@@ -223,7 +228,6 @@ const Board = () => {
     );
     animatePieceMove(selectedPiece, shortestPath);
     setMoveableSlots([]);
-    setPlayerTurn((old) => (old === 0 ? 1 : 0));
     setSelectedPiece(null);
   };
 
@@ -235,9 +239,9 @@ const Board = () => {
         height="825"
         style={{
           backgroundImage: `url(${bg})`,
-          backgroundSize: "cover", // zoom in so it covers fully
-          backgroundPosition: "center", // show center part
-          backgroundRepeat: "no-repeat", // no repeats
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
         className="bg-[gray]"
         onClick={() => {
@@ -262,21 +266,31 @@ const Board = () => {
       {players.map((player, playerIndex) =>
         player.pokemons.map((p, pIdx) => {
           return (
-            <Image
+            <div
+              className="w-[100px] h-[100px] absolute duration-400 ease-in-out"
               key={p.id + "0"}
-              src={p.image}
-              width={100}
-              height={100}
-              onClick={() => {
-                handlePieceSelection(playerIndex, pIdx);
-              }}
-              alt={"pokemon image"}
               style={{
                 top: boardStructure[p.boardKey].position.y - 75,
                 left: boardStructure[p.boardKey].position.x - 50,
               }}
-              className="absolute duration-400 ease-in-out"
-            />
+              onClick={() => {
+                handlePieceSelection(playerIndex, pIdx);
+              }}
+            >
+              <Image
+                src={p.image}
+                width={100}
+                height={100}
+                alt={"pokemon image"}
+              />
+              <div
+                className={`rounded-full ${
+                  playerIndex === 1 ? "bg-[#1d67c2]" : "bg-[#c2431d]"
+                } absolute bottom-[10px] right-[10px] text-center w-[20px] h-[20px] text-white text-[12px]`}
+              >
+                {p.steps}
+              </div>
+            </div>
           );
         })
       )}

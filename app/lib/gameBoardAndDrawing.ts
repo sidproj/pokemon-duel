@@ -333,8 +333,8 @@ const recFindPossiblePlace = (
   return connected;
 };
 
-export const findPossiblePlace = (boardKey: number, filledSlots: number[]) => {
-  return recFindPossiblePlace(boardKey, 3, filledSlots);
+export const findPossiblePlace = (boardKey: number, filledSlots: number[],steps:number) => {
+  return recFindPossiblePlace(boardKey, steps, filledSlots);
 };
 
 export const bsf = (start: number, end: number, filledSlots: number[]) => {

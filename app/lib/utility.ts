@@ -14,5 +14,20 @@ export const backgrounds = [
   background5,
 ];
 
-
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+export function debounce<T extends (...args: any[]) => void>(
+  func: T,
+  delay: number
+) {
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  return (...args: Parameters<T>) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+}
