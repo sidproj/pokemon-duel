@@ -349,7 +349,6 @@ export const bsf = (start: number, end: number, filledSlots: number[]) => {
 
     if (lastSlot === end) return path;
 
-
     for (const next of boardStructure[lastSlot].connected) {
       if (!visited[next] && !filledSlots.includes(next)) {
         visited[next] = true;
@@ -358,4 +357,30 @@ export const bsf = (start: number, end: number, filledSlots: number[]) => {
     }
   }
   return [];
+};
+export const animateHighlights = (
+  ctx: CanvasRenderingContext2D,
+  slots: number[],
+  time: number
+) => {
+  slots.forEach((key) => {
+    const dot = boardStructure[key];
+    const { x, y } = dot.position;
+
+    const baseRadius = 15;
+    const pulse = Math.sin(time / 300) * 3;
+    const radius = baseRadius + pulse;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+
+    ctx.strokeStyle = "#62F762";
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 15 + Math.abs(pulse * 2);
+    ctx.shadowColor = "#62F762";
+
+    ctx.stroke();
+    ctx.restore();
+  });
 };

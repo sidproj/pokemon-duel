@@ -14,9 +14,8 @@ export interface BoardStructureInterface {
 }
 
 export interface Pieces{
-  [key:string]:{
     boardKey:number,
     onBoard:boolean,
-    image:string
-  }
+    image:string,
+    id:string;
 }
