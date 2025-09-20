@@ -2,6 +2,7 @@
 import { Queue } from "@/app/lib/ds";
 import {
   boardStructure,
+  bsf,
   drawLine,
   drawPoint,
   findPossiblePlace,
@@ -122,29 +123,34 @@ const Board = () => {
   };
 
   const animatePieceMove = (pieceId: string, path: number[]) => {
-    const animationDelay = 100;
+    const animationDelay = 150;
 
-    path.forEach((slotKey: number, index: number) => {
+    for(let i=0;i<path.length;i++){
       setTimeout(() => {
         setPieces((prev) => ({
           ...prev,
           [pieceId]: {
             ...prev[pieceId],
-            boardKey: slotKey,
+            boardKey: path[i],
           },
         }));
-      }, animationDelay * (index + 1));
-    });
+        console.log(animationDelay * (i+(2+i)))
+      }, animationDelay * (i+(3+i)));  
+    }
   };
 
   const movePiece = (boardKey: number) => {
+
+    const filledSlots = Object.keys(pieces).map((k) => pieces[k].boardKey);
+
     if (!selectedPiece || !moveAbleSlots.includes(boardKey)) {
       setSelectedPiece(null);
       setMoveableSlots([]);
       return;
     }
-    const path = [boardKey];
-    animatePieceMove(selectedPiece,path)
+    const shortestPath = bsf(pieces[selectedPiece].boardKey,boardKey,filledSlots);
+
+    animatePieceMove(selectedPiece,shortestPath)
     setMoveableSlots([]);
     setSelectedPiece(null);
   };

@@ -339,18 +339,23 @@ export const findPossiblePlace = (boardKey: number, filledSlots: number[]) => {
 
 export const bsf = (start: number, end: number, filledSlots: number[]) => {
   const visited: { [key: number]: boolean } = {};
-  const parent: { [key: number]: number | null } = {};
 
   const queue = new Queue();
+  queue.enqueue([start]);
 
-  queue.enqueue(start);
-  visited[start] = true;
-  parent[start] = null;
+  while (!queue.isEmpty()) {
+    const path = queue.dequeue();
+    const lastSlot = path[path.length - 1];
 
-  while(!queue.isEmpty()){
-    const curr:number = queue.peek();
+    if (lastSlot === end) return path;
 
-    
 
+    for (const next of boardStructure[lastSlot].connected) {
+      if (!visited[next] && !filledSlots.includes(next)) {
+        visited[next] = true;
+        queue.enqueue([...path, next]);
+      }
+    }
   }
+  return [];
 };
