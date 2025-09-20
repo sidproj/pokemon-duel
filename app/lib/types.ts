@@ -9,7 +9,7 @@ export interface BoardStructureInterface {
   [key: number]: { 
     position: { x: number; y: number },
     connected: number[],
-    type:"DOT" | "SPAWN" | "FLAG"
+    type:"DOT" | "SPAWN" | "FLAG" | "BENCH"
   }
 }
 

@@ -1,25 +1,26 @@
+import { Queue } from "./ds";
 import { BoardStructureInterface } from "./types";
 
 export const boardStructure: BoardStructureInterface = {
   // vertical left outside
   0: {
     type: "SPAWN",
-    position: { x: 100, y: 100 },
+    position: { x: 100, y: 200 },
     connected: [1, 5, 21],
   },
   1: {
     type: "DOT",
-    position: { x: 100, y: 225 },
+    position: { x: 100, y: 300 },
     connected: [0, 2],
   },
   2: {
     type: "DOT",
-    position: { x: 100, y: 350 },
+    position: { x: 100, y: 400 },
     connected: [1, 3],
   },
   3: {
     type: "DOT",
-    position: { x: 100, y: 475 },
+    position: { x: 100, y: 500 },
     connected: [2, 4],
   },
   4: {
@@ -31,49 +32,49 @@ export const boardStructure: BoardStructureInterface = {
   //horizontal top outside
   5: {
     type: "DOT",
-    position: { x: 200, y: 100 },
+    position: { x: 200, y: 200 },
     connected: [6, 0],
   },
   6: {
     type: "DOT",
-    position: { x: 300, y: 100 },
+    position: { x: 300, y: 200 },
     connected: [5, 7, 24],
   },
   7: {
     type: "FLAG",
-    position: { x: 400, y: 100 },
+    position: { x: 400, y: 200 },
     connected: [6, 8],
   },
   8: {
     type: "DOT",
-    position: { x: 500, y: 100 },
+    position: { x: 500, y: 200 },
     connected: [7, 9],
   },
   9: {
     type: "DOT",
-    position: { x: 600, y: 100 },
+    position: { x: 600, y: 200 },
     connected: [8, 10],
   },
   10: {
     type: "SPAWN",
-    position: { x: 700, y: 100 },
+    position: { x: 700, y: 200 },
     connected: [9, 11, 25],
   },
 
   // vertical right outside
   11: {
     type: "DOT",
-    position: { x: 700, y: 225 },
+    position: { x: 700, y: 300 },
     connected: [10, 12],
   },
   12: {
     type: "DOT",
-    position: { x: 700, y: 350 },
+    position: { x: 700, y: 400 },
     connected: [11, 13],
   },
   13: {
     type: "DOT",
-    position: { x: 700, y: 475 },
+    position: { x: 700, y: 500 },
     connected: [12, 14],
   },
   14: {
@@ -112,61 +113,137 @@ export const boardStructure: BoardStructureInterface = {
   // vertical left inside
   21: {
     type: "DOT",
-    position: { x: 225, y: 225 },
+    position: { x: 225, y: 300 },
     connected: [22, 0, 24],
   },
   22: {
     type: "DOT",
-    position: { x: 225, y: 350 },
+    position: { x: 225, y: 400 },
     connected: [21, 23],
   },
   23: {
     type: "DOT",
-    position: { x: 225, y: 475 },
+    position: { x: 225, y: 500 },
     connected: [22, 28, 4],
   },
 
   // horizontal top inside
   24: {
     type: "DOT",
-    position: { x: 400, y: 225 },
+    position: { x: 400, y: 300 },
     connected: [6, 21, 25],
   },
 
   // vertical right inside
   25: {
     type: "DOT",
-    position: { x: 600, y: 225 },
+    position: { x: 600, y: 300 },
     connected: [24, 26, 10],
   },
   26: {
     type: "DOT",
-    position: { x: 600, y: 350 },
+    position: { x: 600, y: 400 },
     connected: [25, 27],
   },
   27: {
     type: "DOT",
-    position: { x: 600, y: 475 },
+    position: { x: 600, y: 500 },
     connected: [26, 28, 14],
   },
 
   // horizontal bottom inside
   28: {
     type: "DOT",
-    position: { x: 400, y: 475 },
+    position: { x: 400, y: 500 },
     connected: [27, 18, 23],
+  },
+
+  // top bench
+  29: {
+    type: "BENCH",
+    position: { x: 300, y: 75 },
+    connected: [0, 10],
+  },
+  30: {
+    type: "BENCH",
+    position: { x: 400, y: 75 },
+    connected: [0, 10],
+  },
+  31: {
+    type: "BENCH",
+    position: { x: 500, y: 75 },
+    connected: [0, 10],
+  },
+  32: {
+    type: "BENCH",
+    position: { x: 300, y: 150 },
+    connected: [0, 10],
+  },
+  33: {
+    type: "BENCH",
+    position: { x: 400, y: 150 },
+    connected: [0, 10],
+  },
+  34: {
+    type: "BENCH",
+    position: { x: 500, y: 150 },
+    connected: [0, 10],
+  },
+
+  //bottom bench
+  35: {
+    type: "BENCH",
+    position: { x: 300, y: 700 },
+    connected: [4, 14],
+  },
+  36: {
+    type: "BENCH",
+    position: { x: 400, y: 700 },
+    connected: [4, 14],
+  },
+  37: {
+    type: "BENCH",
+    position: { x: 500, y: 700 },
+    connected: [4, 14],
+  },
+  38: {
+    type: "BENCH",
+    position: { x: 300, y: 775 },
+    connected: [4, 14],
+  },
+  39: {
+    type: "BENCH",
+    position: { x: 400, y: 775 },
+    connected: [4, 14],
+  },
+  40: {
+    type: "BENCH",
+    position: { x: 500, y: 775 },
+    connected: [4, 14],
   },
 };
 
 export const drawPoint = (
   ctx: CanvasRenderingContext2D,
-  type: "DOT" | "FLAG" | "SPAWN",
+  type: "DOT" | "FLAG" | "SPAWN" | "BENCH",
   x: number,
   y: number,
   key: number
 ) => {
   // draw triangle for flag
-  if (type === "FLAG") {
+  if (type === "BENCH") {
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 15, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(x, y, 20, 0, Math.PI * 2);
+    ctx.stroke();
+  } else if (type === "FLAG") {
     const points = [];
     const radius = 10;
     for (let i = 0; i < 3; i++) {
@@ -188,6 +265,9 @@ export const drawPoint = (
     ctx.arc(x, y, 15, 0, Math.PI * 2);
     ctx.stroke();
   } else {
+    ctx.lineWidth = 1;
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "white";
     // draw circle with dot if spawn
     if (type === "SPAWN") {
       ctx.beginPath();
@@ -202,7 +282,6 @@ export const drawPoint = (
     ctx.arc(x, y, 5, 0, Math.PI * 2);
     ctx.fill();
   }
-
   ctx.fillStyle = "lime"; // text color
   ctx.font = "12px Arial";
   ctx.textAlign = "left"; // align text to start from x
@@ -221,24 +300,29 @@ export const drawLine = (
 ) => {
   ctx.fillStyle = "white";
   ctx.strokeStyle = "white";
+  ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
   ctx.stroke();
 };
 
-const recFindPossiblePlace = (boardKey: number, level: number,filledSlots:number[]) => {
+const recFindPossiblePlace = (
+  boardKey: number,
+  level: number,
+  filledSlots: number[]
+) => {
   if (level === 0) {
     return [];
   }
   const connected: any = {};
 
   boardStructure[boardKey].connected.map((k) => {
-    if(filledSlots.includes(k)){
-        return;
+    if (filledSlots.includes(k)) {
+      return;
     }
     connected[k] = true;
-    const newConnected = recFindPossiblePlace(k, level - 1,filledSlots);
+    const newConnected = recFindPossiblePlace(k, level - 1, filledSlots);
     Object.keys(newConnected)
       .filter((l) => newConnected[l])
       .map((l) => {
@@ -249,6 +333,24 @@ const recFindPossiblePlace = (boardKey: number, level: number,filledSlots:number
   return connected;
 };
 
-export const findPossiblePlace = (boardKey: number,filledSlots:number[]) => {
-  return recFindPossiblePlace(boardKey, 3,filledSlots);
+export const findPossiblePlace = (boardKey: number, filledSlots: number[]) => {
+  return recFindPossiblePlace(boardKey, 3, filledSlots);
+};
+
+export const bsf = (start: number, end: number, filledSlots: number[]) => {
+  const visited: { [key: number]: boolean } = {};
+  const parent: { [key: number]: number | null } = {};
+
+  const queue = new Queue();
+
+  queue.enqueue(start);
+  visited[start] = true;
+  parent[start] = null;
+
+  while(!queue.isEmpty()){
+    const curr:number = queue.peek();
+
+    
+
+  }
 };

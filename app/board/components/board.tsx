@@ -35,7 +35,6 @@ const Board = () => {
   }, []);
 
   useEffect(() => {
-    console.log(pieces);
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext("2d");
@@ -51,7 +50,7 @@ const Board = () => {
       pokemonPieces?.forEach((p: any, index: number) => {
         pieces[p._id] = {
           onBoard: true,
-          boardKey: index,
+          boardKey: index + 29,
           image: p.image,
         };
       });
@@ -66,34 +65,41 @@ const Board = () => {
     const keys = Object.keys(boardStructure);
     const queue = new Queue();
 
-    queue.enqueue(keys[0]);
-
-    while (!queue.isEmpty()) {
-      const curr: number = queue.peek();
-      if (visitedDots[curr] !== true) {
-        visitedDots[curr] = true;
-        // draw the dots
-        const x = boardStructure[curr].position.x;
-        const y = boardStructure[curr].position.y;
-        const type = boardStructure[curr].type;
-
-        drawPoint(ctx, type, x, y, curr);
-
-        // push connections into queue;
-        const connected = boardStructure[curr].connected;
-        connected.forEach((c) => {
-          const x2 = boardStructure[c].position.x;
-          const y2 = boardStructure[c].position.y;
-          queue.enqueue(c);
-
-          drawLine(ctx, x, y, x2, y2);
-        });
+    for (let i = 0; i < keys.length; i++) {
+      if (visitedDots[parseInt(keys[i])] !== true) {
+        queue.enqueue(keys[i]);
       }
-      queue.dequeue();
+
+      while (!queue.isEmpty()) {
+        const curr: number = queue.peek();
+        if (visitedDots[curr] !== true) {
+          visitedDots[curr] = true;
+          // draw the dots
+          const x = boardStructure[curr].position.x;
+          const y = boardStructure[curr].position.y;
+          const type = boardStructure[curr].type;
+
+          drawPoint(ctx, type, x, y, curr);
+
+          if (type === "BENCH") {
+            continue;
+          }
+
+          // push connections into queue;
+          const connected = boardStructure[curr].connected;
+          connected.forEach((c) => {
+            queue.enqueue(c);
+            const x2 = boardStructure[c].position.x;
+            const y2 = boardStructure[c].position.y;
+
+            drawLine(ctx, x, y, x2, y2);
+          });
+        }
+        queue.dequeue();
+      }
     }
     if (selectedPiece) {
       moveAbleSlots.forEach((key) => {
-        console.log(key);
         const dot = boardStructure[key];
         ctx.beginPath();
         ctx.arc(dot.position.x, dot.position.y, 18, 0, 2 * Math.PI);
@@ -108,33 +114,53 @@ const Board = () => {
 
   const handlePieceSelection = (pieceKey: string) => {
     const filledSlots = Object.keys(pieces).map((k) => pieces[k].boardKey);
-    const slots = findPossiblePlace(pieces[pieceKey].boardKey,filledSlots);
-    const keys = Object.keys(slots)
-      .filter((k) => !filledSlots.includes(parseInt(k)))
-      .map((k) => parseInt(k));
-    console.log(keys);
+    const slots = findPossiblePlace(pieces[pieceKey].boardKey, filledSlots);
+    const keys = Object.keys(slots).map((k) => parseInt(k));
+    console.log(slots);
     setMoveableSlots(keys);
     setSelectedPiece(pieceKey);
   };
 
+  const animatePieceMove = (pieceId: string, path: number[]) => {
+    const animationDelay = 100;
+
+    path.forEach((slotKey: number, index: number) => {
+      setTimeout(() => {
+        setPieces((prev) => ({
+          ...prev,
+          [pieceId]: {
+            ...prev[pieceId],
+            boardKey: slotKey,
+          },
+        }));
+      }, animationDelay * (index + 1));
+    });
+  };
+
   const movePiece = (boardKey: number) => {
-    const id = selectedPiece;
-    console.log({ boardKey, selectedPiece });
-    if (!id) return;
-    setPieces((prev) => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        boardKey: boardKey,
-      },
-    }));
+    if (!selectedPiece || !moveAbleSlots.includes(boardKey)) {
+      setSelectedPiece(null);
+      setMoveableSlots([]);
+      return;
+    }
+    const path = [boardKey];
+    animatePieceMove(selectedPiece,path)
     setMoveableSlots([]);
     setSelectedPiece(null);
   };
 
   return (
-    <div className="flex flex-col gap-2 relative w-[800px] h-[700px]">
-      <canvas ref={canvasRef} width="800" height="700" className="bg-[gray]" />
+    <div className="flex flex-col gap-2 relative w-[800px] h-[825px] scale-[0.9]">
+      <canvas
+        ref={canvasRef}
+        width="800"
+        height="825"
+        className="bg-[gray]"
+        onClick={() => {
+          setSelectedPiece(null);
+          setMoveableSlots([]);
+        }}
+      />
       {Object.keys(boardStructure).map((k: string) => {
         return (
           <div
