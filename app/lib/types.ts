@@ -18,13 +18,19 @@ export interface Pieces {
   onBoard: boolean;
   image: string;
   id: string;
-  steps:number
+  steps: number;
+  moves:Move[];
 }
 
+export type AttackType = "RED" | "WHITE" | "PURPLE" | "BLUE";
+
 export interface Move {
-  base_wheel_size: number;
-  name: string;
-  move_type: "RED" | "WHITE" | "WHITE Z-MOVE" | "PURPLE Z-MOVE";
-  additional_notes:string;
-  damage:number;
+  attack_wheel_size: number;
+  attack_name: string;
+  attack_type: AttackType;
+  attack_value: number;
+  attack_ability: string;
+  attack_start_angle_deg: number;
+  attack_end_angle_deg: number;
+  attack_wheel_file_name: string;
 }

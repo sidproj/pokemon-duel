@@ -4,7 +4,7 @@ import { Move } from "@/app/lib/types";
 import { notification } from "antd";
 import Image from "next/image";
 import { useState } from "react";
-import MoveInput from "./MoveInput";
+import MovesTable from "./MovesTable";
 
 interface Props {
   pokemon: any;
@@ -13,7 +13,7 @@ interface Props {
 const SinglePokemonWrapper = (props: Props) => {
   const { pokemon } = props;
   const [steps, setSteps] = useState<number>(pokemon.steps);
-  const [moves, setMoves] = useState<Move[]>(pokemon.moves || []);
+  const [moves, setMoves] = useState<any[]>(pokemon.moves || []);
 
   const handleSave = async () => {
     if (steps == 0 || moves.length == 0) {
@@ -58,7 +58,7 @@ const SinglePokemonWrapper = (props: Props) => {
           onChange={(e) => setSteps(parseInt(e.target.value))}
         />
 
-        <MoveInput moves={moves} setMoves={setMoves} />
+        <MovesTable moves={moves}/>
       </div>
     </div>
   );

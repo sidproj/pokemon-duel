@@ -24,13 +24,7 @@ export default async function PokemonPage({ params }: PageProps) {
     three_d: pokemon.three_d,
     rarity: pokemon.rarity,
     steps: pokemon.steps,
-    moves: pokemon.moves.map((move: any) => ({
-      base_wheel_size: move.base_wheel_size,
-      name: move.name,
-      move_type: move.move_type,
-      additional_notes: move.additional_notes,
-      damage: move.damage,
-    })),
+    moves: pokemon.moves.map((m: any) => ({ ...m, id: m._id.toString() })),
   };
 
   return <SinglePokemonWrapper pokemon={p} />;

@@ -11,7 +11,13 @@ import {
 import { Pieces } from "@/app/lib/types";
 import { backgrounds, fetcher } from "@/app/lib/utility";
 import Image from "next/image";
-import React, { useRef, useEffect, useState } from "react";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import useSWR from "swr";
 
 interface Player {
@@ -19,7 +25,12 @@ interface Player {
   player_name: string;
 }
 
-const Board = () => {
+interface Props {
+  setSelectedPokemon: Dispatch<SetStateAction<Pieces | null>>;
+}
+
+const Board = (props: Props) => {
+  const { setSelectedPokemon } = props;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
 
@@ -70,6 +81,7 @@ const Board = () => {
           image: p.image,
           id: p._id,
           steps: p.steps,
+          moves: p.moves,
         };
       }
     );
@@ -172,6 +184,7 @@ const Board = () => {
   };
 
   const handlePieceSelection = (playerIndex: number, pokemonIndex: number) => {
+    setSelectedPokemon(players[playerIndex].pokemons[pokemonIndex]);
     if (playerIndex != playerTurn) return;
 
     const filledSlots = [
@@ -218,6 +231,7 @@ const Board = () => {
 
     if (selectedPiece == null || !moveAbleSlots.includes(boardKey)) {
       setSelectedPiece(null);
+      setSelectedPokemon(null);
       setMoveableSlots([]);
       return;
     }
@@ -229,6 +243,7 @@ const Board = () => {
     animatePieceMove(selectedPiece, shortestPath);
     setMoveableSlots([]);
     setSelectedPiece(null);
+    setSelectedPokemon(null);
   };
 
   return (
@@ -246,6 +261,7 @@ const Board = () => {
         className="bg-[gray]"
         onClick={() => {
           setSelectedPiece(null);
+          setSelectedPokemon(null);
           setMoveableSlots([]);
         }}
       />

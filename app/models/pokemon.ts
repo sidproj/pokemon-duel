@@ -2,34 +2,36 @@ import mongoose, { Schema } from "mongoose";
 import { Move } from "../lib/types";
 
 const moveSchema = new Schema<Move>({
-  base_wheel_size: { type: Number, required: true },
-  name: { type: String, required: true },
-  move_type: {
+  attack_wheel_size: { type: Number, required: true },
+  attack_name: { type: String, required: true },
+  attack_type: {
     type: String,
-    enum: ["RED", "WHITE", "WHITE Z-MOVE", "PURPLE Z-MOVE"],
+    enum: ["RED", "WHITE", "PURPLE", "BLUE", "GOLD"],
     required: true,
   },
-  additional_notes: { type: String, default: "" },
-  damage: { type: Number, required: true },
+  attack_value: { type: Number },
+  attack_ability: { type: String },
+  attack_start_angle_deg: { type: Number, required: true },
+  attack_end_angle_deg: { type: Number, required: true },
 });
 
 const pokemonSchema = new mongoose.Schema({
-  name:{
-    type:String,
-    required:true,
+  name: {
+    type: String,
+    required: true,
   },
-  rarity:{
-    type:String,
-    enum:["UX","EX","R","UC","C"],
-    required:true,
+  rarity: {
+    type: String,
+    enum: ["UX", "EX", "R", "UC", "C"],
+    required: true,
   },
-  three_d:{
-    type:String,
-    require:true,
+  three_d: {
+    type: String,
+    require: true,
   },
-  image:{
-    type:String,
-    required:true,
+  image: {
+    type: String,
+    required: true,
   },
   steps: { type: Number, default: 0 },
   moves: { type: [moveSchema], default: [] },
@@ -37,6 +39,7 @@ const pokemonSchema = new mongoose.Schema({
 
 pokemonSchema.index({ name: 1, rarity: 1 }, { unique: true });
 
-const Pokemon = mongoose.models.Pokemon || mongoose.model("Pokemon", pokemonSchema);
+const Pokemon =
+  mongoose.models.Pokemon || mongoose.model("Pokemon", pokemonSchema);
 
 export default Pokemon;
