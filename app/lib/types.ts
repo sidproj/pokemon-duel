@@ -34,3 +34,8 @@ export interface Move {
   attack_end_angle_deg: number;
   attack_wheel_file_name: string;
 }
+
+export interface Player {
+  pokemons: Pieces[];
+  player_name: string;
+}

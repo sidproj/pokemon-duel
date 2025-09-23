@@ -4,11 +4,12 @@ import {
   animateHighlights,
   boardStructure,
   bsf,
+  checkKnockoutBySurround,
   drawLine,
   drawPoint,
   findPossiblePlace,
 } from "@/app/lib/gameBoardAndDrawing";
-import { Pieces } from "@/app/lib/types";
+import { Pieces, Player } from "@/app/lib/types";
 import { backgrounds, fetcher } from "@/app/lib/utility";
 import Image from "next/image";
 import React, {
@@ -19,11 +20,6 @@ import React, {
   SetStateAction,
 } from "react";
 import useSWR from "swr";
-
-interface Player {
-  pokemons: Pieces[];
-  player_name: string;
-}
 
 interface Props {
   setSelectedPokemon: Dispatch<SetStateAction<Pieces | null>>;
@@ -184,7 +180,7 @@ const Board = (props: Props) => {
   };
 
   const handlePieceSelection = (playerIndex: number, pokemonIndex: number) => {
-    setSelectedPokemon(players[playerIndex].pokemons[pokemonIndex]);
+    // setSelectedPokemon(players[playerIndex].pokemons[pokemonIndex]);
     if (playerIndex != playerTurn) return;
 
     const filledSlots = [
@@ -201,29 +197,31 @@ const Board = (props: Props) => {
     setSelectedPiece(pokemonIndex);
   };
 
-  const animatePieceMove = (pokemonIndex: number, path: number[]) => {
-    const animationDelay = 100;
+  const animatePieceMove = async (pokemonIndex: number, path: number[]) => {
+    const animationDelay = 300;
+    setMoveableSlots([]);
 
     for (let i = 0; i < path.length; i++) {
-      setTimeout(() => {
-        setPlayers((old) => {
-          const newPlayers = [...old];
-          newPlayers[playerTurn].pokemons[pokemonIndex].boardKey = path[i];
-          newPlayers[playerTurn] = {
-            ...newPlayers[playerTurn],
-            pokemons: [...newPlayers[playerTurn].pokemons],
-          };
+      // wait before updating state
+      await new Promise((resolve) => setTimeout(resolve, animationDelay));
 
-          return newPlayers;
-        });
-        if (i + 1 == path.length) {
-          setPlayerTurn((old) => (old === 0 ? 1 : 0));
-        }
-      }, animationDelay * (i + (3 + i * 4)));
+      setPlayers((old) => {
+        const newPlayers = [...old];
+        newPlayers[playerTurn].pokemons[pokemonIndex].boardKey = path[i];
+        newPlayers[playerTurn] = {
+          ...newPlayers[playerTurn],
+          pokemons: [...newPlayers[playerTurn].pokemons],
+        };
+
+        return newPlayers;
+      });
+      if (i + 1 == path.length) {
+        setPlayerTurn((old) => (old === 0 ? 1 : 0));
+      }
     }
   };
 
-  const movePiece = (boardKey: number) => {
+  const movePiece = async (boardKey: number) => {
     const filledSlots = [
       ...players[0].pokemons.map((p) => p.boardKey),
       ...players[1].pokemons.map((p) => p.boardKey),
@@ -240,8 +238,21 @@ const Board = (props: Props) => {
       boardKey,
       filledSlots
     );
-    animatePieceMove(selectedPiece, shortestPath);
-    setMoveableSlots([]);
+
+    await animatePieceMove(selectedPiece, shortestPath);
+
+    const tempPlayers: Player[] = JSON.parse(JSON.stringify(players));
+    tempPlayers[playerTurn].pokemons[selectedPiece].boardKey = boardKey;
+    const knockedOut = checkKnockoutBySurround(boardKey, tempPlayers);
+
+    console.log(knockedOut);
+    for (let i = 0; i < knockedOut.length; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      players[0].pokemons = players[0].pokemons.filter(p=>!knockedOut.includes(p.boardKey))
+      players[1].pokemons = players[1].pokemons.filter(p=>!knockedOut.includes(p.boardKey))
+      setPlayers(players);
+    }
+
     setSelectedPiece(null);
     setSelectedPokemon(null);
   };

@@ -1,5 +1,5 @@
 import { Queue } from "./ds";
-import { BoardStructureInterface } from "./types";
+import { BoardStructureInterface, Pieces, Player } from "./types";
 
 export const boardStructure: BoardStructureInterface = {
   // vertical left outside
@@ -333,7 +333,11 @@ const recFindPossiblePlace = (
   return connected;
 };
 
-export const findPossiblePlace = (boardKey: number, filledSlots: number[],steps:number) => {
+export const findPossiblePlace = (
+  boardKey: number,
+  filledSlots: number[],
+  steps: number
+) => {
   return recFindPossiblePlace(boardKey, steps, filledSlots);
 };
 
@@ -383,4 +387,44 @@ export const animateHighlights = (
     ctx.stroke();
     ctx.restore();
   });
+};
+
+export const checkKnockoutBySurround = (newSlot: number, players: Player[]) => {
+  const connected = boardStructure[newSlot].connected;
+
+  const player1 = players[0].pokemons.map((p) => p.boardKey);
+  const player2 = players[1].pokemons.map((p) => p.boardKey);
+  const knockedOut = [];
+
+  for (let i = 0; i < connected.length; i++) {
+    const cur = connected[i];
+    if (player1.includes(cur)) {
+      let surrounded = true;
+      const connectedSlots = boardStructure[cur].connected;
+      for (let j = 0; j < connectedSlots.length; j++) {
+        if (!surrounded) break;
+        if (!player2.includes(connectedSlots[j])) {
+          surrounded = false;
+        }
+      }
+      if (surrounded) {
+        knockedOut.push(cur);
+      }
+    }
+    else if(player2.includes(cur)){
+      let surrounded = true;
+      const connectedSlots = boardStructure[cur].connected;
+      for (let j = 0; j < connectedSlots.length; j++) {
+        if (!surrounded) break;
+        if (!player1.includes(connectedSlots[j])) {
+          surrounded = false;
+        }
+      }
+      if (surrounded) {
+        knockedOut.push(cur);
+      }
+    }
+  }
+
+  return knockedOut;
 };

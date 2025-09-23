@@ -31,9 +31,7 @@ const MovesPieChart: React.FC<MovesPieChartProps> = ({ moves }) => {
     type: move.attack_type,
     attack_value: move.attack_value,
   }));
-
-  console.log(pieData);
-
+  
   return (
     <PieChart width={400} height={400}>
       <Pie
@@ -95,7 +93,7 @@ const MovesPieChart: React.FC<MovesPieChartProps> = ({ moves }) => {
         formatter={(value: number, name: string, props: any) => [
           `${value}`,
           `${props.payload.name}`,
-          `${props.payload.attack_ability}`
+          `${props.payload.attack_ability}`,
         ]}
       />
     </PieChart>
